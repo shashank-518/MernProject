@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import Card from "../../shared/components/UIElement/Card";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
@@ -65,24 +66,32 @@ const UpdatePlace = () => {
   const finalValue = DUMMY_VALUES.find((place) => place.id === selectedid);
 
   console.log(finalValue)
+
+ 
+    useEffect(() => {
+
+      if(finalValue){
+
+        setData(
+          {
+            title: {
+              value: finalValue.title,
+              isvalid: true,
+            },
+            descrption: {
+              value: finalValue.descrption,
+              isvalid: true,
+            }
+          },
+          true
+        );
+      }
+      setisLoading(false);
+    }, [setData, finalValue]);
+
+  
   
 
-  useEffect(() => {
-    setData(
-      {
-        title: {
-          value: finalValue.title,
-          isvalid: true,
-        },
-        descrption: {
-          value: finalValue.descrption,
-          isvalid: true,
-        }
-      },
-      true
-    );
-    setisLoading(false);
-  }, [setData, finalValue]);
 
   const placeUpdateSubmitForm = (event) => {
     event.preventDefault();
@@ -91,9 +100,12 @@ const UpdatePlace = () => {
 
   if (!finalValue) {
     return (
-      <div>
+      <div className="center" >
+      <Card>
         <h2>No element was found</h2>
+      </Card>
       </div>
+      
     );
   }
 
