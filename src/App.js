@@ -1,27 +1,71 @@
-import React from 'react';
-import { BrowserRouter as Router , Routes, Route } from 'react-router-dom';
+import React ,{useCallback , useState} from 'react';
+
+
+import { BrowserRouter as Router , Routes, Route , Navigate  } from 'react-router-dom';
 import User from './Users/pages/user';
 import NewPlace from './Places/pages/NewPlace';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import UserPlace from './Places/pages/UserPlace';
 import UpdatePlace from './Places/pages/UpdatePlace';
-import Auth from './Users/pages/Auth';
+import Auth from './Users/pages/Auth.js';
+import AuthContext from './shared/context/AuthContext';
 
 function App() {
-  return (<Router>
+
+  const [isLoggedIn , setisLoggedIn] = useState(false)
+
+  const login = useCallback(()=>{
+    setisLoggedIn(true)
+  },[])
+
+  const logout = useCallback(()=>{
+    setisLoggedIn(false)
+  },[])
+
+  let routes;
+
+  if(isLoggedIn){
+
+    routes = ( 
+      <>
+        <Route path="/" element={<User />} />
+        <Route path='/places/new' element = {<NewPlace/>} />
+      <Route path='/places/:placesid' element = {<UpdatePlace/>}/>
+        <Route path = "/:uid/places" element = {<UserPlace/>} />
+        <Route path="*" element={<Navigate to="/" />} />
+        
+      </>
+    )
+
+  }else{
+    routes = ( 
+      <>
+        <Route path="/" element={<User />} />
+        <Route path = "/:uid/places" element = {<UserPlace/>} />
+        <Route path = "/auth" element = {<Auth/>} />
+        <Route path="*" element={<Navigate to="/auth" />} />
+      </>
+    )
+  }
+
+  return (
+  <AuthContext.Provider value={{isLoggedIn: isLoggedIn , login: login , logout:logout }}>
+
+
+  
+  
+  <Router>
       <MainNavigation/>
       <main>
 
     <Routes>
-      <Route path="/" element={<User />} />
-      <Route path='/places/new' element = {<NewPlace/>} />
-      <Route path='/places/:placesid' element = {<UpdatePlace/>}/>
-      <Route path = "/:uid/places" element = {<UserPlace/>} />
-      <Route path = "/auth" element = {<Auth/>} />
+      {routes}
 
     </Routes>
       </main>
-  </Router>)
+  </Router>
+  </AuthContext.Provider>
+  )
 }
 
 export default App;
