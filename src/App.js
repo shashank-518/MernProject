@@ -5,6 +5,7 @@ import NewPlace from './Places/pages/NewPlace';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import UserPlace from './Places/pages/UserPlace';
 import UpdatePlace from './Places/pages/UpdatePlace';
+import Auth from './Users/pages/Auth';
 
 function App() {
   return (<Router>
@@ -16,6 +17,8 @@ function App() {
       <Route path='/places/new' element = {<NewPlace/>} />
       <Route path='/places/:placesid' element = {<UpdatePlace/>}/>
       <Route path = "/:uid/places" element = {<UserPlace/>} />
+      <Route path = "/auth" element = {<Auth/>} />
+
     </Routes>
       </main>
   </Router>)
