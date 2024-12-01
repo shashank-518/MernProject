@@ -1,40 +1,82 @@
-import React from 'react';
+import React, { useState } from "react";
 
-import Card from '../../shared/components/UIElement/Card.js';
-import Input from '../../shared/components/FormElements/Input';
-import Button from '../../shared/components/FormElements/Button';
+import Card from "../../shared/components/UIElement/Card.js";
+import Input from "../../shared/components/FormElements/Input";
+import Button from "../../shared/components/FormElements/Button";
 import {
   VALIDATOR_EMAIL,
-  VALIDATOR_MINLENGTH
-} from '../../shared/Utils/validators.js';
-import { useForm } from '../../shared/hooks/formhooks.js';
-import './Auth.css';
+  VALIDATOR_MINLENGTH,
+  VALIDATOR_REQUIRE,
+} from "../../shared/Utils/validators.js";
+import { useForm } from "../../shared/hooks/formhooks.js";
+import "./Auth.css";
 
 const Auth = () => {
-  const [formState, inputHandler] = useForm(
+  const [isLogin, setisLogin] = useState(false);
+
+  const [formState, inputHandler , setData] = useForm(
     {
       email: {
-        value: '',
-        isValid: false
+        value: "",
+        isValid: false,
       },
       password: {
-        value: '',
-        isValid: false
-      }
+        value: "",
+        isValid: false,
+      },
     },
     false
   );
 
-  const authSubmitHandler = event => {
+  const authSubmitHandler = (event) => {
     event.preventDefault();
     console.log(formState.inputs);
   };
 
+  const signupHandler = () => {
+
+    if(isLogin){
+        setData(
+            {
+                ...formState.inputs,
+                name: undefined,
+            },
+            formState.inputs.email.isValid && formState.inputs.password.isValid
+        )
+    }
+    else{
+        setData(
+            {
+                ...formState.inputs,
+                name:{
+                    value:"",
+                    isValid: false,
+                }
+            },
+            false
+        )
+    }
+
+
+    setisLogin((prev) => !prev);
+  };
+
   return (
     <Card className="authentication">
-      <h2>Login Required</h2>
+      <h2>{isLogin ? "SINGUP" : "LOGIN"} Required</h2>
       <hr />
       <form onSubmit={authSubmitHandler}>
+        {isLogin && (
+          <Input
+            element="input"
+            id="name"
+            type="name"
+            label="Your name"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid Name."
+            onInput={inputHandler}
+          />
+        )}
         <Input
           element="input"
           id="email"
@@ -53,10 +95,14 @@ const Auth = () => {
           errorText="Please enter a valid password, at least 5 characters."
           onInput={inputHandler}
         />
-        <Button type="submit" disabled={!formState.isValid}>
-          LOGIN
+        <Button type="submit" disabled={!formState.isValid} >
+        {isLogin ? "SINGUP" : "LOGIN"}
         </Button>
       </form>
+
+      <Button inverse onClick={signupHandler}>
+        Switch To {isLogin ? "Login" : "Signup"}
+      </Button>
     </Card>
   );
 };
