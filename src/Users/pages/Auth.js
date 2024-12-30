@@ -37,7 +37,7 @@ const Auth = () => {
   
   const signupHandler = () => {
 
-    if(!isLogin){
+    if(isLogin){
         setData(
             {
                 ...formState.inputs,
@@ -64,15 +64,40 @@ const Auth = () => {
   };
   const authSubmitHandler = async(event) => {
     event.preventDefault();
+    setisLoading(true)
+    setisError(null)
     
     if(!isLogin){
-      console.log("hiiii")
-    }else{
-      console.log("hello") 
+
       try{
-        setisLoading(true)
-        setisError(null)
-        console.log("hello");
+        const response = await fetch("http://localhost:5000/api/users/login", {
+          method: 'POST',
+          headers:{
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          })
+        })
+
+
+        console.log(response);
+        
+
+        
+        const responseData = await  response.json();
+        if(!response.ok){
+          throw new Error(responseData.message)
+        }
+        auth.login();
+      }
+      catch(e){
+        setisError(e.message || "Something went worng please try again later")
+      }
+      
+    }else{
+      try{
         const response = await fetch("http://localhost:5000/api/users/signup", {
           method: 'POST',
           headers:{
@@ -88,6 +113,7 @@ const Auth = () => {
         
         const responseData = await  response.json();
         console.log(responseData);
+        
         if(!response.ok){
           throw new Error(responseData.message)
         }
