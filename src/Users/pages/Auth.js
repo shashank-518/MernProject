@@ -10,12 +10,16 @@ import {
 } from "../../shared/Utils/validators.js";
 import { useForm } from "../../shared/hooks/formhooks.js";
 import AuthContext from "../../shared/context/AuthContext.js";
+import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner.js";
+import ErrorModal from "../../shared/components/UIElement/ErrorModal.js";
 
 import "./Auth.css";
 
 const Auth = () => {
-  const [isLogin, setisLogin] = useState(false);
   const auth = useContext(AuthContext)
+  const [isLogin, setisLogin] = useState(true);
+  const [isLoading , setisLoading] = useState(false)
+  const [isError , setisError]= useState()
 
   const [formState, inputHandler , setData] = useForm(
     {
@@ -30,16 +34,10 @@ const Auth = () => {
     },
     false
   );
-
-  const authSubmitHandler = (event) => {
-    event.preventDefault();
-    console.log(formState.inputs);
-    auth.login()
-  };
-
+  
   const signupHandler = () => {
 
-    if(isLogin){
+    if(!isLogin){
         setData(
             {
                 ...formState.inputs,
@@ -64,23 +62,73 @@ const Auth = () => {
 
     setisLogin((prev) => !prev);
   };
+  const authSubmitHandler = async(event) => {
+    event.preventDefault();
+    
+    if(!isLogin){
+      console.log("hiiii")
+    }else{
+      console.log("hello") 
+      try{
+        setisLoading(true)
+        setisError(null)
+        console.log("hello");
+        const response = await fetch("http://localhost:5000/api/users/signup", {
+          method: 'POST',
+          headers:{
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          })
+        })
+
+        
+        const responseData = await  response.json();
+        console.log(responseData);
+        if(!response.ok){
+          throw new Error(responseData.message)
+        }
+        auth.login();
+      }
+      catch(e){
+        setisError(e.message || "Something went worng please try again later")
+      }
+    }
+    setisLoading(false)
+
+
+  };
+
+  const errorCancel = ()=>{
+    setisError(null)
+  }
+
 
   return (
+
+    <>
+
+    <ErrorModal error ={isError} onClear={errorCancel}/>
+
     <Card className="authentication">
+      {isLoading && <LoadingSpinner overlay/>}
       <h2>{isLogin ? "SINGUP" : "LOGIN"} Required</h2>
       <hr />
       <form onSubmit={authSubmitHandler}>
         {isLogin && (
           <Input
-            element="input"
-            id="name"
+          element="input"
+          id="name"
             type="name"
             label="Your name"
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Please enter a valid Name."
             onInput={inputHandler}
-          />
-        )}
+            />
+          )}
         <Input
           element="input"
           id="email"
@@ -89,7 +137,7 @@ const Auth = () => {
           validators={[VALIDATOR_EMAIL()]}
           errorText="Please enter a valid email address."
           onInput={inputHandler}
-        />
+          />
         <Input
           element="input"
           id="password"
@@ -98,7 +146,7 @@ const Auth = () => {
           validators={[VALIDATOR_MINLENGTH(5)]}
           errorText="Please enter a valid password, at least 5 characters."
           onInput={inputHandler}
-        />
+          />
         <Button type="submit" disabled={!formState.isValid} >
         {isLogin ? "SINGUP" : "LOGIN"}
         </Button>
@@ -108,6 +156,7 @@ const Auth = () => {
         Switch To {isLogin ? "Login" : "Signup"}
       </Button>
     </Card>
+          </>
   );
 };
 
