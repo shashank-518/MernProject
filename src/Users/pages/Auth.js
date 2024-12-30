@@ -80,11 +80,6 @@ const Auth = () => {
             password: formState.inputs.password.value,
           })
         })
-
-
-        console.log(response);
-        
-
         
         const responseData = await  response.json();
         if(!response.ok){
@@ -112,7 +107,6 @@ const Auth = () => {
 
         
         const responseData = await  response.json();
-        console.log(responseData);
         
         if(!response.ok){
           throw new Error(responseData.message)
