@@ -2,51 +2,42 @@ import React, { useEffect , useState} from "react";
 import UserList from "../components/UserList";
 import ErrorModal from "../../shared/components/UIElement/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner";
+import { useHttp } from "../../shared/hooks/httphooks";
 
 const User = () => {
 
-  const [error , setError] = useState();
-  const [isloading , setisLoading] = useState(false)
   const [LoadedData , setLoadedData] =  useState()
+  const {Loading , error , sendRequest , errorCancel} = useHttp()
+
   
   useEffect( ()=>{
 
-    const responsefun = async ()=>{
+    const fetchrequest = async ()=>{
 
-      setisLoading(true)
       try{
 
-        const response = await fetch('http://localhost:5000/api/users')
-        const responseData = await response.json();
-
-        if(!response.ok){
-            throw new Error(responseData.message)
-        }
+        const responseData = await sendRequest('http://localhost:5000/api/users')
 
         setLoadedData(responseData.users)
 
       }catch(e){
-        setError(e.message)
       }
-      setisLoading(false)
     }
 
-      responsefun();
-  } , [])
+      fetchrequest();
+  } , [sendRequest])
 
 
-  const errorhandle = ()=>{
-    setError(null)
-  }
+  
 
   return  (
 
     <>
-    <ErrorModal error = {error} onClear = {errorhandle} /> 
+    <ErrorModal error = {error} onClear = {errorCancel} /> 
     <div className="center">
-    {isloading && <LoadingSpinner overlay/>}
+    {Loading && <LoadingSpinner overlay/>}
     </div>
-    {!isloading && LoadedData && <UserList items={LoadedData} />}
+    {!Loading && LoadedData && <UserList items={LoadedData} />}
 
     </>
 

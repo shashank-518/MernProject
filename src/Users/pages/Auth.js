@@ -19,9 +19,7 @@ import "./Auth.css";
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLogin, setisLogin] = useState(true);
-
   const { Loading, sendRequest, error, errorCancel } = useHttp();
-
   const [formState, inputHandler, setData] = useForm(
     {
       email: {
