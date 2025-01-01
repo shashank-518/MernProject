@@ -1,44 +1,65 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PlaceList from '../components/PlaceList';
+import ErrorModal from '../../shared/components/UIElement/ErrorModal';
+import LoadingSpinner from '../../shared/components/UIElement/LoadingSpinner';
 import { useParams } from 'react-router-dom';
+import { useHttp } from '../../shared/hooks/httphooks';
 
 const UserPlace = () => {
 
-  const DUMMY_VALUES = [
-    {
-      id:'p1',
-      title: 'Burj Khalifa',
-      imageURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8yfKNUZIfC9qe-Vz5SkVWSpPhDONel-ek-A&s',
-      address: '1 Sheikh Mohammed bin Rashid Blvd - Downtown Dubai - Dubai - United Arab Emirates',
-      descrption : 'The Burj Khalifa is a skyscraper in Dubai, United Arab Emirates. It is the worlds tallest structure.',
-      location : {
-        lat : 25.197197 ,
-        long: 55.2743764,
-      },
-      creator : 'u1'
-    },
-    {
-      id:'p2',
-      title: 'Burj.. Khalifa',
-      imageURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8yfKNUZIfC9qe-Vz5SkVWSpPhDONel-ek-A&s',
-      address: '1 Sheikh Mohammed bin Rashid Blvd - Downtown Dubai - Dubai - United Arab Emirates',
-      descrption : 'The Burj Khalifa is a skyscraper in Dubai, United Arab Emirates. It is the worlds tallest structure.',
-      location : {
-        lat : 25.197197 ,
-        long: 55.2743764,
-      },
-      creator : 'u2'
-    },
-
-  ]
+  const [LoadedData , setLoadedData] = useState()
 
   const param = useParams().uid;
 
-  const loaded_values = DUMMY_VALUES.filter(place  => place.creator === param)
+  const {Loading , error , sendRequest , errorCancel} = useHttp()
+
+  console.log(param);
+  
+
+  useEffect(()=>{
+
+    const fetchPlaces = async ()=>{
+
+      try{
+        
+        const responseData = await sendRequest(`http://localhost:5000/api/places/user/${param}`)
+        setLoadedData(responseData.places)
+      }
+      catch(e){
+        console.log(e);
+      }
+
+
+
+
+
+
+    }
+
+    fetchPlaces()
+
+  } , [sendRequest , param])
+
+  
 
 
   return (
-    <PlaceList items = {loaded_values}  />
+
+    <>
+
+    <ErrorModal error ={error} onClear = {errorCancel} />
+    {Loading && <div className='center'>
+      <LoadingSpinner overlay/>
+    </div> }
+    {
+      !Loading && LoadedData && <PlaceList items = {LoadedData}  />
+    }
+    
+    
+    
+    
+    </>
+
   );
 }
 

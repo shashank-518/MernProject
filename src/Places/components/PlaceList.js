@@ -24,10 +24,10 @@ const PlaceList = (props) => {
           key={place.id}
           id={place.id}
           title={place.title}
-          image={place.imageURL}
+          imageURL={place.imageURL}
           descrption={place.descrption}
           address={place.address}
-          creatorId={place.creator}
+          creator={place.creator}
           coordinates={place.location}
         />
       ))}

@@ -33,7 +33,7 @@ function App() {
       <>
         <Route path="/" element={<User />} />
         <Route path='/places/new' element = {<NewPlace/>} />
-      <Route path='/places/:placesid' element = {<UpdatePlace/>}/>
+        <Route path='/places/:placesid' element = {<UpdatePlace/>}/>
         <Route path = "/:uid/places" element = {<UserPlace/>} />
         <Route path="*" element={<Navigate to="/" />} />
         
