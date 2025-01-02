@@ -10,44 +10,15 @@ import {
 
 import "./NewPlace.css";
 import { useForm } from "../../shared/hooks/formhooks";
-const DUMMY_VALUES = [
-  {
-    id: "p1",
-    title: "Burj Khalifa",
-    imageURL:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8yfKNUZIfC9qe-Vz5SkVWSpPhDONel-ek-A&s",
-    address:
-      "1 Sheikh Mohammed bin Rashid Blvd - Downtown Dubai - Dubai - United Arab Emirates",
-    descrption:
-      "The Burj Khalifa is a skyscraper in Dubai, United Arab Emirates. It is the worlds tallest structure.",
-    location: {
-      lat: 25.197197,
-      long: 55.2743764,
-    },
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Burj... Khalifa",
-    imageURL:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8yfKNUZIfC9qe-Vz5SkVWSpPhDONel-ek-A&s",
-    address:
-      "1 Sheikh Mohammed bin Rashid Blvd - Downtown Dubai - Dubai - United Arab Emirates",
-    descrption:
-      "The Burj Khalifa is a skyscraper in Dubai, United Arab Emirates. It is the worlds tallest structure.",
-    location: {
-      lat: 25.197197,
-      long: 55.2743764,
-    },
-    creator: "u2",
-  },
-];
+import { useHttp } from "../../shared/hooks/httphooks";
+import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElement/ErrorModal";
 
 const UpdatePlace = () => {
-  const [isLoading, setisLoading] = useState(true);
-
-
+  const [UpdateData, setUpdateData] = useState();
   const selectedid = useParams().placesid;
+
+  const {Loading , error , sendRequest,errorCancel} = useHttp()
 
   const [formState, inputHandler, setData] = useForm(
     {
@@ -63,31 +34,41 @@ const UpdatePlace = () => {
     false
   );
 
-  const finalValue = DUMMY_VALUES.find((place) => place.id === selectedid);
-
-  console.log(finalValue)
-
  
     useEffect(() => {
 
-      if(finalValue){
+      const fetchPlace = async()=>{
 
-        setData(
-          {
-            title: {
-              value: finalValue.title,
-              isvalid: true,
+        try{
+          const responseData = await sendRequest(`http://localhost:5000/api/places/${selectedid}`)
+
+          setUpdateData(responseData.place)
+    
+          setData(
+            {
+              title: {
+                value: responseData.place.title,
+                isvalid: true,
+              },
+              descrption: {
+                value: responseData.place.descrption,
+                isvalid: true,
+              }
             },
-            descrption: {
-              value: finalValue.descrption,
-              isvalid: true,
-            }
-          },
-          true
-        );
+            true
+          );
+        }
+
+        catch(e){
+
+          console.log(e);
+          
+
+        }
+        
       }
-      setisLoading(false);
-    }, [setData, finalValue]);
+      fetchPlace();
+    }, [sendRequest, setData , selectedid]);
 
   
   
@@ -98,7 +79,7 @@ const UpdatePlace = () => {
     console.log(formState.inputs);
   };
 
-  if (!finalValue) {
+  if (!UpdateData) {
     return (
       <div className="center" >
       <Card>
@@ -109,15 +90,19 @@ const UpdatePlace = () => {
     );
   }
 
-  if (isLoading) {
+  if (Loading) {
     return (
       <div>
-        <h2>Loading.....</h2>
+        {Loading && <LoadingSpinner overlay/>}
       </div>
     );
   }
 
   return (
+    <>
+
+    <ErrorModal error={error} onClear = {errorCancel} />
+    
     <form className="place-form" onSubmit={placeUpdateSubmitForm}>
       <Input
         id="title"
@@ -145,6 +130,9 @@ const UpdatePlace = () => {
         Update Place
       </Button>
     </form>
+    
+    
+    </>
   );
 };
 
