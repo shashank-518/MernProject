@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import {useNavigate} from 'react-router-dom'
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
@@ -14,6 +15,8 @@ import { useHttp } from "../../shared/hooks/httphooks";
 import "./NewPlace.css";
 
 const NewPlace = () => {
+
+  const Navigate = useNavigate()
   const { Loading, error, sendRequest, errorCancel } = useHttp();
   const auth = useContext(AuthContext);
 
@@ -49,6 +52,7 @@ const NewPlace = () => {
           creator: auth.userId,
         })
       );
+      Navigate("/")
     } catch (e) {}
   };
 

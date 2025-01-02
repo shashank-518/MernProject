@@ -25,12 +25,6 @@ const UserPlace = () => {
       }
       catch(e){
       }
-
-
-
-
-
-
     }
 
     fetchPlaces()

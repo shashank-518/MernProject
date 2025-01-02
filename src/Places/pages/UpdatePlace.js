@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useContext } from "react";
+import {useNavigate} from 'react-router-dom'
 import { useParams } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -7,6 +8,7 @@ import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
 } from "../../shared/Utils/validators";
+import AuthContext from "../../shared/context/AuthContext";
 
 import "./NewPlace.css";
 import { useForm } from "../../shared/hooks/formhooks";
@@ -15,6 +17,10 @@ import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElement/ErrorModal";
 
 const UpdatePlace = () => {
+
+
+  const Navigate = useNavigate()
+  const auth = useContext(AuthContext)
   const [UpdateData, setUpdateData] = useState();
   const selectedid = useParams().placesid;
 
@@ -78,6 +84,7 @@ const UpdatePlace = () => {
           descrption: formState.inputs.descrption.value,
         })
       );
+      Navigate(`/${auth.userId}/places`)
     } catch (e) {
       console.log(e);
     }
