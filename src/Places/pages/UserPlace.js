@@ -12,8 +12,6 @@ const UserPlace = () => {
   const param = useParams().uid;
 
   const {Loading , error , sendRequest , errorCancel} = useHttp()
-
-  console.log(param);
   
 
   useEffect(()=>{
@@ -26,7 +24,6 @@ const UserPlace = () => {
         setLoadedData(responseData.places)
       }
       catch(e){
-        console.log(e);
       }
 
 

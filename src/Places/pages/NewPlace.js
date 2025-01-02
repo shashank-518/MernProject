@@ -35,8 +35,6 @@ const NewPlace = () => {
     false
   );
 
-  console.log(formState);
-
   const handleForm = async (event) => {
     event.preventDefault();
     try {
