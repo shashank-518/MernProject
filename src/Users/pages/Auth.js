@@ -13,7 +13,7 @@ import AuthContext from "../../shared/context/AuthContext.js";
 import { useHttp } from "../../shared/hooks/httphooks.js";
 import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner.js";
 import ErrorModal from "../../shared/components/UIElement/ErrorModal.js";
-
+import ImageUpload from "../../shared/components/FormElements/imageUpload.js";
 import "./Auth.css";
 
 const Auth = () => {
@@ -124,6 +124,8 @@ const Auth = () => {
             errorText="Please enter a valid email address."
             onInput={inputHandler}
           />
+
+          {isLogin && <ImageUpload id="image" center/>}
           <Input
             element="input"
             id="password"
