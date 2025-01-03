@@ -5,6 +5,9 @@ import Button from "../../shared/components/FormElements/Button";
 import Modal from "../../shared/components/UIElement/Modal";
 import Map from "../../shared/components/UIElement/Map.js";
 import AuthContext from "../../shared/context/AuthContext.js";
+import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner.js";
+import ErrorModal from "../../shared/components/UIElement/ErrorModal.js";
+import { useHttp } from "../../shared/hooks/httphooks.js";
 
 import "./PlaceItem.css";
 
@@ -12,6 +15,8 @@ const PlaceItem = (props) => {
 
   const auth = useContext(AuthContext)
   const [mapHandler, setmapHander] = useState(false);
+
+  const {Loading , error , sendRequest , errorCancel} = useHttp()
 
   const [showConfirmModal , setshowConfirmModal] = useState(false)
 
@@ -23,9 +28,20 @@ const PlaceItem = (props) => {
 
   const showCancel = ()=> setshowConfirmModal(false)
 
-  const showDeleting = ()=> {
-    console.log("Deleting")
+  const showDeleting = async()=> {
     setshowConfirmModal(false)
+
+    try{
+      await sendRequest(`http://localhost:5000/api/places/${props.id}` , 'DELETE')
+      props.onDelete(props.id)
+    }
+    catch(e){
+      
+    }
+    
+
+
+
   }
 
   return (
@@ -59,6 +75,10 @@ const PlaceItem = (props) => {
       >
         <p>Do you want to delete this place? please note that this cant be undone once delete</p>
       </Modal>
+
+
+      <ErrorModal error = {error} onClear ={errorCancel} />
+      {Loading && <LoadingSpinner asOverlay/>}
 
       <li className="place-item">
         <Card className="place-item__content">

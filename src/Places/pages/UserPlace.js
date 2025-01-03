@@ -31,6 +31,11 @@ const UserPlace = () => {
 
   } , [sendRequest , param])
 
+
+  const placeDeleteHandler = (deletedId) => {
+    setLoadedData(prevdata => prevdata.filter(place => place.id !== deletedId))
+  }
+
   
 
 
@@ -43,7 +48,7 @@ const UserPlace = () => {
       <LoadingSpinner overlay/>
     </div> }
     {
-      !Loading && LoadedData && <PlaceList items = {LoadedData}  />
+      !Loading && LoadedData && <PlaceList items = {LoadedData} onDelete = {placeDeleteHandler} />
     }
     
     
