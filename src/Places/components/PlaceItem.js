@@ -32,7 +32,7 @@ const PlaceItem = (props) => {
     setshowConfirmModal(false)
 
     try{
-      await sendRequest(`http://localhost:5000/api/places/${props.id}` , 'DELETE')
+      await sendRequest(`http://localhost:5000/api/places/${props.id}` , 'DELETE');
       props.onDelete(props.id)
     }
     catch(e){
@@ -78,10 +78,10 @@ const PlaceItem = (props) => {
 
 
       <ErrorModal error = {error} onClear ={errorCancel} />
-      {Loading && <LoadingSpinner asOverlay/>}
 
       <li className="place-item">
         <Card className="place-item__content">
+          {Loading && <LoadingSpinner asOverlay/>}
           <div className="place-item__image">
             <img src={props.imageURL} alt={props.title} />
           </div>

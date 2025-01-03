@@ -1,62 +1,49 @@
-import React, { useEffect, useState } from 'react'
-import PlaceList from '../components/PlaceList';
-import ErrorModal from '../../shared/components/UIElement/ErrorModal';
-import LoadingSpinner from '../../shared/components/UIElement/LoadingSpinner';
-import { useParams } from 'react-router-dom';
-import { useHttp } from '../../shared/hooks/httphooks';
+import React, { useEffect, useState } from "react";
+import PlaceList from "../components/PlaceList";
+import ErrorModal from "../../shared/components/UIElement/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner";
+import { useParams } from "react-router-dom";
+import { useHttp } from "../../shared/hooks/httphooks";
 
 const UserPlace = () => {
-
-  const [LoadedData , setLoadedData] = useState()
+  const [LoadedData, setLoadedData] = useState();
 
   const param = useParams().uid;
 
-  const {Loading , error , sendRequest , errorCancel} = useHttp()
-  
+  const { Loading, error, sendRequest, errorCancel } = useHttp();
 
-  useEffect(()=>{
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/user/${param}`
+        );
+        setLoadedData(responseData.places);
+      } catch (e) {}
+    };
 
-    const fetchPlaces = async ()=>{
+    fetchPlaces();
+  }, [sendRequest, param]);
 
-      try{
-        
-        const responseData = await sendRequest(`http://localhost:5000/api/places/user/${param}`)
-        setLoadedData(responseData.places)
-      }
-      catch(e){
-      }
-    }
-
-    fetchPlaces()
-
-  } , [sendRequest , param])
-
-
-  const placeDeleteHandler = (deletedId) => {
-    setLoadedData(prevdata => prevdata.filter(place => place.id !== deletedId))
-  }
-
-  
-
+  const placeDeleteHandler = deletedId => {
+    setLoadedData(prevdata =>
+      prevdata.filter(place => place.id !== deletedId)
+    );
+  };
 
   return (
-
     <>
-
-    <ErrorModal error ={error} onClear = {errorCancel} />
-    {Loading && <div className='center'>
-      <LoadingSpinner overlay/>
-    </div> }
-    {
-      !Loading && LoadedData && <PlaceList items = {LoadedData} onDelete = {placeDeleteHandler} />
-    }
-    
-    
-    
-    
+      <ErrorModal error={error} onClear={errorCancel} />
+      {Loading && (
+        <div className="center">
+          <LoadingSpinner overlay />
+        </div>
+      )}
+      {!Loading && LoadedData && (
+        <PlaceList items={LoadedData} onDelete={placeDeleteHandler} />
+      )}
     </>
-
   );
-}
+};
 
-export default UserPlace
+export default UserPlace;
