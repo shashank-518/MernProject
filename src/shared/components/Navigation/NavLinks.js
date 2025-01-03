@@ -15,7 +15,7 @@ const NavLinks = () => {
         <NavLink to={"/"} exact > All Users </NavLink>
     </li>
     <li>
-      {login.isLoggedIn && <NavLink to={"/u1/places"}  > My Places </NavLink> }
+      {login.isLoggedIn && <NavLink to={`${login.userId}/places`}  > My Places </NavLink> }
 
     </li>
     <li>
