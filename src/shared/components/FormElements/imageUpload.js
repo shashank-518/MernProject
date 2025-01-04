@@ -1,14 +1,47 @@
-import React  , {useRef}from "react";
+import React  , {useEffect, useRef, useState}from "react";
 import Button from "./Button";
 import './imageUpload.css'
 
 
 const ImageUpload = (props) =>{
 
+    const [file, setFile] = useState();
+    const [previewUrl , setpreviewUrl] = useState();
+    const [isValid , setisValid] = useState(false)
+
     const filePicker = useRef()
 
+    useEffect(()=>{
+        if(!file){
+            return;
+        }
+
+        const fileReader = new FileReader()
+        fileReader.onload = ()=>{
+            setpreviewUrl(fileReader.result)
+        }
+
+        fileReader.readAsDataURL(file)
+
+
+    } , [file])
+
+
+
     const handleFile = (event)=>{
-        console.log(event.target);
+        let pickedfile;
+        let fileIsValid = isValid;
+        if(event.target.files && event.target.files.length === 1){
+            pickedfile = event.target.files[0]
+            setFile(pickedfile)
+            setisValid(true)
+            fileIsValid = true;
+        }
+        else{
+            setisValid(false)
+            fileIsValid = false
+        }
+        props.onInput(props.id , pickedfile , fileIsValid)
     }
 
     const pickimageHandler = ()=>{
@@ -29,13 +62,14 @@ const ImageUpload = (props) =>{
             <div className = {`image-upload ${props.center && 'center'} `}>
 
                 <div className="image-upload__preview" >
-                    <img src="" alt="Preview"/>
+                    {previewUrl && <img src= {previewUrl} alt="Preview"/>}
+                    {!previewUrl && <p>Please pick an Image</p>}
                 </div>
 
                 <Button type ="button"  onClick = {pickimageHandler} >Pick Image</Button>
 
             </div>
-
+            {!isValid && <p>{props.isValid}</p>}
         </div>
     )
 

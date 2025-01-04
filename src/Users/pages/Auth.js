@@ -125,7 +125,7 @@ const Auth = () => {
             onInput={inputHandler}
           />
 
-          {isLogin && <ImageUpload id="image" center/>}
+          {isLogin && <ImageUpload id="image" center onInput={inputHandler}/>}
           <Input
             element="input"
             id="password"
