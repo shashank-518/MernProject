@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
@@ -11,12 +11,12 @@ import ErrorModal from "../../shared/components/UIElement/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElement/LoadingSpinner";
 import AuthContext from "../../shared/context/AuthContext";
 import { useHttp } from "../../shared/hooks/httphooks";
+import ImageUpload from "../../shared/components/FormElements/imageUpload";
 
 import "./NewPlace.css";
 
 const NewPlace = () => {
-
-  const Navigate = useNavigate()
+  const Navigate = useNavigate();
   const { Loading, error, sendRequest, errorCancel } = useHttp();
   const auth = useContext(AuthContext);
 
@@ -34,6 +34,10 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
@@ -41,19 +45,21 @@ const NewPlace = () => {
   const handleForm = async (event) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        { "Content-Type": "application/json" },
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          descrption: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId,
-        })
-      );
-      Navigate("/")
-    } catch (e) {}
+      
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("descrption", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+
+      await sendRequest("http://localhost:5000/api/places", "POST", formData);
+      
+      
+      Navigate("/");
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -87,6 +93,8 @@ const NewPlace = () => {
           errorText="Please enter a valid address"
           onInput={inputHandler}
         />
+        <ImageUpload id="image"  onInput={inputHandler} errorText="Please provide an image." />
+
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE
         </Button>

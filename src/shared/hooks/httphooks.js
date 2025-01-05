@@ -15,9 +15,9 @@ export const useHttp = ()=>{
         
         try{
             const response = await fetch(url ,{
-                headers,
                 method,
                 body,
+                headers,
                 signal:httpAbrot.signal
             })
     
@@ -26,7 +26,7 @@ export const useHttp = ()=>{
             activeHttpRequest.current = activeHttpRequest.current.filter(reqCtrl => reqCtrl !== httpAbrot)
     
             if(!response.ok){
-                throw new Error(responseData.message)
+                throw new Error(responseData?.message || "Something went wrong!");
             }
 
             isloading(false)
