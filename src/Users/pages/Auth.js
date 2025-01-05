@@ -40,6 +40,7 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -51,6 +52,10 @@ const Auth = () => {
             value: "",
             isValid: false,
           },
+          image:{
+              value: "",
+              isValid: false,
+          }
         },
         false
       );
